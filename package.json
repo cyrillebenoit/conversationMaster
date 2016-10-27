@@ -1,0 +1,32 @@
+{
+  "name": "wconversationmaster",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "async": "^2.1.2",
+    "basic-auth-connect": "^1.0.0",
+    "body-parser": "^1.15.2",
+    "botmaster": "^2.1.0",
+    "cfenv": "1.0.x",
+    "cloudant": "^1.5.1",
+    "dotenv": "^2.0.0",
+    "express": "^4.13.4",
+    "express-csv": "^0.6.0",
+    "nano": "^6.2.0",
+    "uuid": "^2.0.3",
+    "vcap_services": "^0.2.0",
+    "watson-developer-cloud": "^2.6.2"
+  },
+  "repository": {},
+  "engines": {
+    "node": "4.x"
+  },
+  "description": "The Node.js Starter demonstrates a simple, reusable Node.js web application based on the Express framework.",
+  "main": "server.js",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
