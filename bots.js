@@ -66,15 +66,20 @@ botmaster.on('update', (bot, update) => {
     },
   };
 
+  var delay = 1200;
+
   watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
     inMemoryContexts[update.sender.id] = watsonUpdate.context;
     for(var i = 0; i < watsonUpdate.output.text.length; i++) {
-    const text = watsonUpdate.output.text[i];
-    setTimeout(function () {
-      bot.sendTextMessageTo(text, update.sender.id);
-    }, 1333*i);
-  }
-})
+      const text = watsonUpdate.output.text[i];
+      setTimeout(function () {
+        bot.sendIsTypingMessageTo(update.sender.id);
+      }, delay*i+250);
+      setTimeout(function () {
+        bot.sendTextMessageTo(text, update.sender.id);
+      }, delay*(i+1));
+    }
+  })
 });
 
 botmaster.on('error', (bot, err) => {
