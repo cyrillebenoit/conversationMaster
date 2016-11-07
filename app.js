@@ -81,6 +81,13 @@ app.post( '/api/message', function(req, res) {
   }
   // Send the input to the conversation service
   conversation.message( payload, function(err, data) {
+    /*if(data.output.nodes_visited){
+      if(data.context.nodesVisited){
+        if(data.output.nodes_visited[0] && !data.context.nodesVisited[data.output.nodes_visited[0]] ) {
+          data.context.nodesVisited[data.output.nodes_visited[0]]=1;
+        }
+      }
+    }*/
     if ( err ) {
       return res.status( err.code || 500 ).json( err );
     }
@@ -134,31 +141,31 @@ function updateMessage(input, response) {
 if ( cloudantUrl ) {
   // If logging has been enabled (as signalled by the presence of the cloudantUrl) then the
   // app developer must also specify a LOG_USER and LOG_PASS env vars.
-  if ( !process.env.LOG_USER || !process.env.LOG_PASS ) {
+  if ( !cloudantCredentials.username || !cloudantCredentials.password ) {
     throw new Error( 'LOG_USER OR LOG_PASS not defined, both required to enable logging!' );
   }
   // add basic auth to the endpoints to retrieve the logs!
-  var auth = basicAuth( process.env.LOG_USER, process.env.LOG_PASS );
+  var auth = basicAuth( cloudantCredentials.username, cloudantCredentials.password );
   // If the cloudantUrl has been configured then we will want to set up a nano client
   var nano = require( 'nano' )( cloudantUrl );
   // add a new API which allows us to retrieve the logs (note this is not secure)
-  nano.db.get( 'car_logs', function(err) {
+  nano.db.get( 'chatbot_logs', function(err) {
     if ( err ) {
       console.error(err);
-      nano.db.create( 'car_logs', function(errCreate) {
+      nano.db.create( 'chatbot_logs', function(errCreate) {
         console.error(errCreate);
-        logs = nano.db.use( 'car_logs' );
+        logs = nano.db.use( 'chatbot_logs' );
       } );
     } else {
-      logs = nano.db.use( 'car_logs' );
+      logs = nano.db.use( 'chatbot_logs' );
     }
   } );
 
   // Endpoint which allows deletion of db
   app.post( '/clearDb', auth, function(req, res) {
-    nano.db.destroy( 'car_logs', function() {
-      nano.db.create( 'car_logs', function() {
-        logs = nano.db.use( 'car_logs' );
+    nano.db.destroy( 'chatbot_logs', function() {
+      nano.db.create( 'chatbot_logs', function() {
+        logs = nano.db.use( 'chatbot_logs' );
       } );
     } );
     return res.json( {'message': 'Clearing db'} );

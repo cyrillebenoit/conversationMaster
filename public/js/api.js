@@ -35,6 +35,13 @@ var Api = (function() {
       };
     }
     if (context) {
+      /* you can alterate context from here before the request is sent.
+      if(!context.nodesVisited)
+        context.nodesVisited = {};
+      if (!context.bubbleAmount)
+        context.bubbleAmount = 0;
+      context.bubbleAmount++;
+      context.nbNodes = Object.keys(context.nodesVisited).length+1;*/
       payloadToWatson.context = context;
     }
 
