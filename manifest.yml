@@ -1,0 +1,16 @@
+---
+declared-services:
+  my-conversation-service:
+    label: conversation
+    plan: free
+  my-cloudant-db:
+    label: cloudantNoSQLDB
+    plan: lite
+applications:
+- name: wConversationMaster
+  memory: 256M
+  instances: 1
+  host: wConversationMaster
+  services:
+  - my-conversation-service
+  - my-cloudant-db

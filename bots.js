@@ -72,19 +72,21 @@ botmaster.on('update', (bot, update) => {
   }*/
 
   const context = inMemoryContexts[update.sender.id]; // this will be undefined on the first run
-
-  var input = JSON.stringify(update.message.text);
-  //Remove quotation marks
-  input = input.substring(0, input.length - 1).substring(1);
-  //Replace \n
-  input = input.replace(/\\n/g," ");
-  const messageForWatson = {
-    context,
-    workspace_id: process.env.WORKSPACE_ID,
-    input: {
-      text: input,
-    },
-  };
+  var messageForWatson = {};
+  if(update.message.text) {
+    var input = JSON.stringify(update.message.text);
+    //Remove quotation marks
+    input = input.substring(1, input.length - 1);
+    //Replace \n
+    input = input.replace(/\\n/g," ");
+    messageForWatson = {
+      context,
+      workspace_id: process.env.WORKSPACE_ID,
+      input: {
+        text: input,
+      },
+    };
+  }
 
   var delay = 1200;
 
@@ -154,16 +156,16 @@ botmaster.on('update', (bot, update) => {
           if(text.indexOf("offres Play, Zen, et Jet ") !== -1 || text == "Avec les offres Fibre d'Orange, vous avez la garantie d'un service jusqu'à 30 fois plus rapide que l'ADSL, et d'une stabilité à toute épreuve !\n\nMerci de choisir parmi les offres Play, Zen, et Jet."){
             bot.sendDefaultButtonMessageTo(['Zen','Play','Jet'],update.sender.id, text);
           }
-          else if(text.indexOf("par oui ou non") !== -1 || text.indexOf("Voulez-vous ") !== -1
+          else if(text.indexOf("par oui ou non") !== -1 || text.indexOf("Voulez-vous ") !== -1 || text.indexOf("voulez-vous ") !== -1
                   || text.indexOf("Avez-vous ") !== -1 || text.indexOf("Tout est bon pour vous") !== -1
-                  || text.indexOf("vous préférez peut-être télé") !== -1){
+                  || text.indexOf("vous préférez peut-être télé") !== -1 || text.indexOf("Souhaitez-vous") !== -1){
             bot.sendDefaultButtonMessageTo(['Oui','Non'],update.sender.id, text);
           }
           else if(text.indexOf("Vous pouvez modifier votre offre") !== -1) {
             bot.sendDefaultButtonMessageTo(['Adresse','Identité','Offre','Options TV','Moyen de paiement'],update.sender.id, text);
           }
           else if(text.indexOf("Nous proposons deux bouquets") !== -1) {
-            bot.sendDefaultButtonMessageTo(['Canal+','CanalSat','Les deux'],update.sender.id, text);
+            bot.sendDefaultButtonMessageTo(['Canal+', 'CanalSat', 'Les deux', 'Aucun'],update.sender.id, text);
           }
           else {
             bot.sendTextMessageTo(text,update.sender.id);
