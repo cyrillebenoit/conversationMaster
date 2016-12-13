@@ -1,9 +1,9 @@
 ---
 declared-services:
-  my-conversation-service:
+  wcm-conversation:
     label: conversation
     plan: free
-  my-cloudant-db:
+  wcm-cloudant:
     label: cloudantNoSQLDB
     plan: Lite
 applications:
@@ -12,5 +12,12 @@ applications:
   instances: 1
   host: wConversationMaster
   services:
-  - my-conversation-service
-  - my-cloudant-db
+  - wcm-conversation
+  - wcm-cloudant
+  env:
+    MESSENGER_APP_SECRET: UNDEFINED
+    MESSENGER_PAGE_TOKEN: UNDEFINED
+    MESSENGER_VERIFY_TOKEN: UNDEFINED
+    TELEGRAM_AUTH_TOKEN: UNDEFINED
+    TELEGRAM_WEBHOOKENDPOINT: UNDEFINED
+    WORKSPACE_ID: UNDEFINED
