@@ -45,11 +45,11 @@ ConversationMaster is a Botmaster integration for IBM Watson Conversation in par
 
 ### VII - Configure the Facebook webhooks
   1. Click on Configure webhooks (that's where things start to get uneasy)
-  2. Use https://sample.mybluemix.net/messenger/<MESSENGER_WEBHOOKENDPOINT> (watch out, we're here using our sample link, DO NOT copy paste this link)
+  2. Use https://sample.mybluemix.net/messenger/MESSENGER_WEBHOOKENDPOINT (watch out, we're here using our sample link, DO NOT copy paste this link)
   3. Select messages, messages_deliveries, messaging_postbacks, and messaging_optins as subscribing fields.
 
 ### VIII - Configure the Telegram webhook
-  1. Open the page https://api.telegram.org/bot<HTTP_TOKEN>/setWebhook?url=https://sample.mybluemix.net/telegram/<TELEGRAM_WEBHOOKENDPOINT>
+  1. Open the page https://api.telegram.org/botHTTP_TOKEN/setWebhook?url=https://sample.mybluemix.net/telegram/TELEGRAM_WEBHOOKENDPOINT
 
 
 ##Great ! Your Watson Conversation is now correctly set and can be used on the web, Telegram, and Facebook Messenger.
