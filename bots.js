@@ -31,7 +31,7 @@ const messengerSettings = {
     pageToken: process.env.MESSENGER_PAGE_TOKEN,
     fbAppSecret: process.env.MESSENGER_APP_SECRET,
   },
-  webhookEndpoint: '/webhook1234/',
+  webhookEndpoint: process.env.MESSENGER_WEBHOOKENDPOINT,
 };
 /*
 * Where the actual code starts. This code is actually all that is required
