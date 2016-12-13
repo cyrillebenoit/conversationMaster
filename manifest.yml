@@ -1,4 +1,3 @@
-wConversationMaster
 ---
 declared-services:
   my-conversation-service:
