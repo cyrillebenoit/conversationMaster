@@ -1,3 +1,4 @@
+wConversationMaster
 ---
 declared-services:
   my-conversation-service:
@@ -5,7 +6,7 @@ declared-services:
     plan: free
   my-cloudant-db:
     label: cloudantNoSQLDB
-    plan: lite
+    plan: shared
 applications:
 - name: wConversationMaster
   memory: 256M
