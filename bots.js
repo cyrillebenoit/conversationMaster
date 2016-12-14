@@ -3,13 +3,11 @@
 const Botmaster = require('botmaster');
 const watson = require('watson-developer-cloud');
 const cfenv = require('cfenv');
+const Buttons = require('./buttons')
+const Stickers = require('./stickers')
 
 // get the app environment from Cloud Foundry
 const appEnv = cfenv.getAppEnv();
-
-const smallThumbID = 369239263222822;
-const bigThumbID   = 369239343222814;
-const hugeThumbID   = 369239383222810;
 
 const watsonConversation = watson.conversation({
   username: process.env.WATSON_CONVERSATION_USERNAME,
@@ -34,25 +32,30 @@ const messengerSettings = {
   webhookEndpoint: process.env.MESSENGER_WEBHOOKENDPOINT,
 };
 /*
-* Where the actual code starts. This code is actually all that is required
-* to have a bot that works on the various different channels and that
-* communicates with the end user using natural language (from Watson Conversation).
-* If a conversation is properly trained on the system, no more code is required.
-*/
-const botsSettings = [{ telegram: telegramSettings },
-                      { messenger: messengerSettings }];
+ * Where the actual code starts. This code is actually all that is required
+ * to have a bot that works on the various different channels and that
+ * communicates with the end user using natural language (from Watson Conversation).
+ * If a conversation is properly trained on the system, no more code is required.
+ */
+const botsSettings = [{
+  telegram: telegramSettings
+}, {
+  messenger: messengerSettings
+}];
 
 const express = require('express');
 const bots = express();
 const bodyParser = require('body-parser');
 
 bots.use(bodyParser.json());
-bots.use(bodyParser.urlencoded({ extended: true }));
+bots.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 const botmasterSettings = {
   botsSettings,
-  app : bots,
-  port: appEnv.isLocal ? 3000 : appEnv.port,
+  app: bots,
+    port: appEnv.isLocal ? 3000 : appEnv.port,
 };
 
 const botmaster = new Botmaster(botmasterSettings);
@@ -73,69 +76,56 @@ botmaster.on('update', (bot, update) => {
 
   const context = inMemoryContexts[update.sender.id]; // this will be undefined on the first run
   var messageForWatson = {};
-  if(update.message.text) {
+  if (update.message.text) {
     var input = JSON.stringify(update.message.text);
     //Remove quotation marks
     input = input.substring(1, input.length - 1);
     //Replace \n
-    input = input.replace(/\\n/g," ");
+    input = input.replace(/\\n/g, " ");
     messageForWatson = {
       context,
       workspace_id: process.env.WORKSPACE_ID,
-      input: {
-        text: input,
-      },
+        input: {
+          text: input,
+        },
     };
   }
 
   var delay = 1200;
 
+  //THIS LINE READS THE USER INPUT (USEFUL TO DETERMINE STICKERS ID)
   //bot.sendTextMessageTo(String(JSON.stringify(update.message)),update.sender.id);
 
-  if(update.message.sticker_id == smallThumbID || update.message.sticker_id == bigThumbID || update.message.sticker_id == hugeThumbID) {
+  if (update.message.sticker_id && Stickers.reactToStickers(update.message.sticker_id)) {
+    var reaction = Stickers.reactToStickers(update.message.sticker_id);
     //Send is typing status...
-    setTimeout(function () {
+    setTimeout(function() {
       bot.sendIsTypingMessageTo(update.sender.id);
     }, 250);
 
-    //Answer depending on the thumb size
-    if(update.message.sticker_id == smallThumbID) {
-      setTimeout(function () {
-        bot.sendTextMessageTo("Oh, c'est tout ? Je m'attendais à plus de satisfaction de votre part...",update.sender.id);
-      }, delay);
-    }
-    else if(update.message.sticker_id == bigThumbID){
-      setTimeout(function () {
-        bot.sendTextMessageTo("On avance mais je suis certain que vous pouvez faire mieux ! Encore un petit effort...",update.sender.id);
-      }, delay);
-    }
-
-    else {
+    //Support attachments
+    if (reaction.attachment) {
       const message = {
         recipient: {
           id: update.sender.id,
         },
         message: {
-          text: 'Ah ! Je vous remercie ! Vous aussi vous êtes au top !'
-        }
-        //These lines are supposed to join the thumb sent by the user, but for some reason it just does not appear.
-        /*,
-        attachment:{
-          type:"image",
-          payload:{
-            url:update.message.attachments[0]['payload']['url'],
+          text: reaction.text
+        },
+        attachment: {
+          type: "image",
+          payload: {
+            url: reaction.attachment
           }
-        }*/
+        }
       };
-      setTimeout(function () {
-        bot.sendMessage(message);
+      bot.sendMessage(message);
+    } else {
+      setTimeout(function() {
+        bot.sendTextMessageTo(reaction.text, update.sender.id);
       }, delay);
-      /*setTimeout(function () {
-        bot.sendAttachmentFromURLTo('image', update.message.attachments[0]['payload']['url'], update.sender.id);
-      }, delay + 200);*/
     }
-  }
-  else {
+  } else {
     watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
       //This type of process allows us to alterate the context of watson conversation from the outside.
       //These lines in particular were replaced, inside WC, by an unique counter increased each time the user imput was not recognized well.
@@ -147,30 +137,20 @@ botmaster.on('update', (bot, update) => {
         }
       }*/
       inMemoryContexts[update.sender.id] = watsonUpdate.context;
-      for(var i = 0; i < watsonUpdate.output.text.length; i++) {
+      for (var i = 0; i < watsonUpdate.output.text.length; i++) {
         const text = watsonUpdate.output.text[i];
-        setTimeout(function () {
+        setTimeout(function() {
           bot.sendIsTypingMessageTo(update.sender.id);
-        }, delay*i+250);
-        setTimeout(function () {
-          if(text.indexOf("offres Play, Zen, et Jet ") !== -1 || text == "Avec les offres Fibre d'Orange, vous avez la garantie d'un service jusqu'à 30 fois plus rapide que l'ADSL, et d'une stabilité à toute épreuve !\n\nMerci de choisir parmi les offres Play, Zen, et Jet."){
-            bot.sendDefaultButtonMessageTo(['Zen','Play','Jet'],update.sender.id, text);
+        }, delay * i + 250);
+        setTimeout(function() {
+          var buttons = [];
+          if (buttons = Buttons.sendWithButtons(text)) {
+            bot.sendDefaultButtonMessageTo(buttons, update.sender.id,
+              text);
+          } else {
+            bot.sendTextMessageTo(text, update.sender.id);
           }
-          else if(text.indexOf("par oui ou non") !== -1 || text.indexOf("Voulez-vous ") !== -1 || text.indexOf("voulez-vous ") !== -1
-                  || text.indexOf("Avez-vous ") !== -1 || text.indexOf("Tout est bon pour vous") !== -1
-                  || text.indexOf("vous préférez peut-être télé") !== -1 || text.indexOf("Souhaitez-vous") !== -1){
-            bot.sendDefaultButtonMessageTo(['Oui','Non'],update.sender.id, text);
-          }
-          else if(text.indexOf("Vous pouvez modifier votre offre") !== -1) {
-            bot.sendDefaultButtonMessageTo(['Adresse','Identité','Offre','Options TV','Moyen de paiement'],update.sender.id, text);
-          }
-          else if(text.indexOf("Nous proposons deux bouquets") !== -1) {
-            bot.sendDefaultButtonMessageTo(['Canal+', 'CanalSat', 'Les deux', 'Aucun'],update.sender.id, text);
-          }
-          else {
-            bot.sendTextMessageTo(text,update.sender.id);
-          }
-        }, delay*(i+1));
+        }, delay * (i + 1));
       }
     })
   }
@@ -180,9 +160,9 @@ botmaster.on('error', (bot, err) => {
   console.log(err.stack);
 });
 /*
-*
-* Where the actual code stops. The rest is boilerplate.
-*
-*/
+ *
+ * Where the actual code stops. The rest is boilerplate.
+ *
+ */
 
 module.exports = bots;
