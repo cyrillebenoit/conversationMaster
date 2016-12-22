@@ -7,6 +7,7 @@ const Buttons = require('./buttons')
 const Stickers = require('./stickers')
 const Context = require('./context');
 const Output = require('./output');
+const Input = require('./input');
 
 // get the app environment from Cloud Foundry
 const appEnv = cfenv.getAppEnv();
@@ -57,7 +58,7 @@ bots.use(bodyParser.urlencoded({
 const botmasterSettings = {
   botsSettings,
   app: bots,
-    port: appEnv.isLocal ? 3000 : appEnv.port,
+  port: appEnv.isLocal ? 3000 : appEnv.port,
 };
 
 const delay = 1200;
@@ -67,21 +68,23 @@ const botmaster = new Botmaster(botmasterSettings);
 const inMemoryContexts = {};
 
 botmaster.on('update', (bot, update) => {
+  var optionalDelay = 0;
+  var context = inMemoryContexts[update.sender.id];
   if (inMemoryContexts[update.sender.id]) {
-    inMemoryContexts[update.sender.id] = Context.setContextToWatson(JSON.parse(
-      JSON.stringify(inMemoryContexts[update.sender.id])));
+    context = Context.setContextToWatson(JSON.parse(
+      JSON.stringify(context)));
   } else {
-    const context = inMemoryContexts[update.sender.id];
     const messageForWatson = {
       context,
       workspace_id: process.env.WORKSPACE_ID,
-        input: {
-          text: " ",
-        },
+      input: {
+        text: "",
+      },
     };
     watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
       Context.setContextAfterWatson(watsonUpdate);
       inMemoryContexts[update.sender.id] = watsonUpdate.context;
+      context = JSON.parse(JSON.stringify(watsonUpdate.context));
       watsonUpdate.output.text[0] = Output.replaceTags(watsonUpdate.output
         .text[0]);
       const text = watsonUpdate.output.text[0];
@@ -98,84 +101,91 @@ botmaster.on('update', (bot, update) => {
         }
       }, delay);
     });
+    optionalDelay = 1200;
   }
-  const context = inMemoryContexts[update.sender.id]; // this will be undefined on the first run
-  var messageForWatson = {};
-  if (update.message.text) {
-    var input = JSON.stringify(update.message.text);
-    //Remove quotation marks
-    input = input.substring(1, input.length - 1);
-    //Replace \n
-    input = input.replace(/\\n/g, " ");
-    messageForWatson = {
+
+  setTimeout(function() {
+    var input = "";
+    if (update.message.text) {
+      input = JSON.stringify(update.message.text);
+      //Remove quotation marks
+      input = input.substring(1, input.length - 1);
+      //Replace \n
+      input = input.replace(/\\n/g, " ");
+      input = Input.replaceTagsUserInput(input);
+    }
+
+    const messageForWatson = {
       context,
       workspace_id: process.env.WORKSPACE_ID,
-        input: {
-          text: input,
-        },
+      input: {
+        text: input,
+      },
     };
-  }
 
-  //THIS LINE READS THE USER INPUT (USEFUL TO DETERMINE STICKERS ID)
-  //bot.sendTextMessageTo(String(JSON.stringify(update.message)),update.sender.id);
+    //THIS LINE READS THE USER INPUT (USEFUL TO DETERMINE STICKERS ID)
+    //bot.sendTextMessageTo(String(JSON.stringify(update.message)),update.sender.id);
 
-  if (update.message.sticker_id && Stickers.reactToStickers(update.message
-      .sticker_id)) {
-    var reaction = Stickers.reactToStickers(update.message.sticker_id);
-    //Send is typing status...
-    setTimeout(function() {
-      bot.sendIsTypingMessageTo(update.sender.id);
-    }, 250);
+    if (update.message.sticker_id && Stickers.reactToStickers(update.message
+        .sticker_id)) {
+      var reaction = Stickers.reactToStickers(update.message.sticker_id);
+      //Send is typing status...
+      setTimeout(function() {
+        bot.sendIsTypingMessageTo(update.sender.id);
+      }, optionalDelay + 250);
 
-    //Support attachments
-    if (reaction.attachment) {
-      const message = {
-        recipient: {
-          id: update.sender.id,
-        },
-        message: {
-          text: reaction.text
-        },
-        attachment: {
-          type: "image",
-          payload: {
-            url: reaction.attachment
+      //Support attachments
+      if (reaction.attachment) {
+        const message = {
+          recipient: {
+            id: update.sender.id,
+          },
+          message: {
+            text: reaction.text
+          },
+          attachment: {
+            type: "image",
+            payload: {
+              url: reaction.attachment
+            }
           }
-        }
-      };
-      bot.sendMessage(message);
+        };
+        bot.sendMessage(message);
+      } else {
+        setTimeout(function() {
+          bot.sendTextMessageTo(reaction.text, update.sender.id);
+        }, optionalDelay + delay);
+      }
     } else {
       setTimeout(function() {
-        bot.sendTextMessageTo(reaction.text, update.sender.id);
-      }, delay);
-    }
-  } else {
-    watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
+        watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
 
-      Context.setContextAfterWatson(watsonUpdate);
-      inMemoryContexts[update.sender.id] = watsonUpdate.context;
+          Context.setContextAfterWatson(watsonUpdate);
+          inMemoryContexts[update.sender.id] = watsonUpdate.context;
 
-      for (var i = 0; i < watsonUpdate.output.text.length; i++) {
-        watsonUpdate.output.text[i] = Output.replaceTags(watsonUpdate
-          .output
-          .text[i]);
-        const text = watsonUpdate.output.text[i];
-        setTimeout(function() {
-          bot.sendIsTypingMessageTo(update.sender.id);
-        }, delay * i + 250);
-        setTimeout(function() {
-          var buttons = [];
-          if (buttons = Buttons.sendWithButtons(text)) {
-            bot.sendDefaultButtonMessageTo(buttons, update.sender
-              .id,
-              text);
-          } else {
-            bot.sendTextMessageTo(text, update.sender.id);
+          for (var i = 0; i < watsonUpdate.output.text.length; i++) {
+            watsonUpdate.output.text[i] = Output.replaceTags(watsonUpdate
+              .output.text[i]);
+            const text = watsonUpdate.output.text[i];
+            setTimeout(function() {
+              bot.sendIsTypingMessageTo(update.sender.id);
+            }, optionalDelay + delay * i + 250);
+            setTimeout(function() {
+              var buttons = [];
+              if (buttons = Buttons.sendWithButtons(text)) {
+                bot.sendDefaultButtonMessageTo(buttons, update.sender
+                  .id,
+                    text);
+              } else {
+                bot.sendTextMessageTo(text, update.sender.id);
+              }
+            }, optionalDelay + delay * (i + 1));
           }
-        }, delay * (i + 1));
-      }
-    })
-  }
+        })
+      }, optionalDelay);
+    }
+  }, optionalDelay / 3);
+
 });
 
 botmaster.on('error', (bot, err) => {

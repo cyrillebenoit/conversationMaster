@@ -25,6 +25,7 @@ var bodyParser = require('body-parser'); // parser for post requests
 var Watson = require('watson-developer-cloud/conversation/v1'); // watson sdk
 const Context = require('./context');
 const Output = require('./output');
+const Input = require('./input');
 
 // The following requires are needed for logging purposes
 var uuid = require('uuid');
@@ -76,10 +77,9 @@ app.post('/api/message', function(req, res) {
   };
   if (req.body) {
     if (req.body.input) {
-      payload.input = req.body.input;
+      payload.input = Input.replaceTagsUserInput(req.body.input);
     }
     if (req.body.context) {
-      //payload.context = JSON.parse(JSON.stringify(req.body.context));
       payload.context = Context.setContextToWatson(JSON.parse(JSON.stringify(
         req.body.context)));
     }
@@ -236,7 +236,7 @@ if (cloudantUrl) {
             if (doc.response.entities && doc.response.entities.length >
               0) {
               entity = doc.response.entities[0].entity + ' : ' +
-                doc.response.entities[0].value;
+              doc.response.entities[0].value;
             }
             outputText = '<no dialog>';
             if (doc.response.output && doc.response.output.text) {

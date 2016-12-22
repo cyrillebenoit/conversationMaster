@@ -9,6 +9,7 @@ const buttonText = {
   "avez-vous ": 1,
   "Avez vous ": 1,
   "avez vous ": 1,
+  "est-ce bien": 1,
   "Tout est bon pour vous": 1,
   "vous préférez peut-être télé": 1,
   "Souhaitez-vous": 1,
