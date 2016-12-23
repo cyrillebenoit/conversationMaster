@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 'use strict';
-
 require('dotenv').config({
   silent: true
 });
-
 var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var Watson = require('watson-developer-cloud/conversation/v1'); // watson sdk
 const Context = require('./context');
 const Output = require('./output');
 const Input = require('./input');
-
 // The following requires are needed for logging purposes
 var uuid = require('uuid');
 var vcapServices = require('vcap_services');
 var basicAuth = require('basic-auth-connect');
-
 // The app owner may optionally configure a cloudand db to track user input.
 // This cloudand db is not required, the app will operate without it.
 // If logging is enabled the app must also enable basic auth to secure logging
@@ -44,11 +39,9 @@ if (cloudantCredentials) {
 cloudantUrl = cloudantUrl || process.env.CLOUDANT_URL; // || '<cloudant_url>';
 var logs = null;
 var app = express();
-
 // Bootstrap application settings
 app.use(express.static('./public')); // load UI from public folder
 app.use(bodyParser.json());
-
 // Create the service wrapper
 var conversation = new Watson({
   // If unspecified here, the CONVERSATION_USERNAME and CONVERSATION_PASSWORD env properties will be checked
@@ -59,7 +52,6 @@ var conversation = new Watson({
   version_date: '2016-09-20',
   version: 'v1'
 });
-
 // Endpoint to be call from the client side
 app.post('/api/message', function(req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
@@ -81,7 +73,7 @@ app.post('/api/message', function(req, res) {
     }
     if (req.body.context) {
       payload.context = Context.setContextToWatson(JSON.parse(JSON.stringify(
-        req.body.context)));
+        req.body.context)), payload.input);
     }
   }
   // Send the input to the conversation service
@@ -97,7 +89,6 @@ app.post('/api/message', function(req, res) {
     return res.json(updateMessage(payload, data));
   });
 });
-
 /**
  * Updates the response text using the intent confidence
  * @param  {Object} input The request to the Conversation service
@@ -150,7 +141,6 @@ function updateMessage(input, response) {
   }
   return response;
 }
-
 if (cloudantUrl) {
   // If logging has been enabled (as signalled by the presence of the cloudantUrl) then the
   // app developer must also specify a LOG_USER and LOG_PASS env vars.
@@ -174,7 +164,6 @@ if (cloudantUrl) {
       logs = nano.db.use('chatbot_logs');
     }
   });
-
   // Endpoint which allows deletion of db
   app.post('/clearDb', auth, function(req, res) {
     nano.db.destroy('chatbot_logs', function() {
@@ -186,7 +175,6 @@ if (cloudantUrl) {
       'message': 'Clearing db'
     });
   });
-
   // Endpoint which allows conversation logs to be fetched
   app.get('/chats', auth, function(req, res) {
     logs.list({
@@ -253,10 +241,7 @@ if (cloudantUrl) {
     });
   });
 }
-
 //BOTS
-
 var bots = require('./bots');
 app.use('/', bots);
-
 module.exports = app;

@@ -1,5 +1,4 @@
 'use strict'
-
 const Botmaster = require('botmaster');
 const watson = require('watson-developer-cloud');
 const cfenv = require('cfenv');
@@ -8,24 +7,20 @@ const Stickers = require('./stickers')
 const Context = require('./context');
 const Output = require('./output');
 const Input = require('./input');
-
 // get the app environment from Cloud Foundry
 const appEnv = cfenv.getAppEnv();
-
 const watsonConversation = watson.conversation({
   username: process.env.WATSON_CONVERSATION_USERNAME,
   password: process.env.WATSON_CONVERSATION_PASSWORD,
   version: 'v1',
   version_date: '2016-05-19',
 });
-
 const telegramSettings = {
   credentials: {
     authToken: process.env.TELEGRAM_AUTH_TOKEN,
   },
   webhookEndpoint: process.env.TELEGRAM_WEBHOOKENDPOINT,
 };
-
 const messengerSettings = {
   credentials: {
     verifyToken: process.env.MESSENGER_VERIFY_TOKEN,
@@ -45,34 +40,27 @@ const botsSettings = [{
 }, {
   messenger: messengerSettings
 }];
-
 const express = require('express');
 const bots = express();
 const bodyParser = require('body-parser');
-
 bots.use(bodyParser.json());
 bots.use(bodyParser.urlencoded({
   extended: true
 }));
-
 const botmasterSettings = {
   botsSettings,
   app: bots,
   port: appEnv.isLocal ? 3000 : appEnv.port,
 };
-
 const delay = 1200;
-
 const botmaster = new Botmaster(botmasterSettings);
-
 const inMemoryContexts = {};
-
 botmaster.on('update', (bot, update) => {
   var optionalDelay = 0;
   var context = inMemoryContexts[update.sender.id];
   if (inMemoryContexts[update.sender.id]) {
-    context = Context.setContextToWatson(JSON.parse(
-      JSON.stringify(context)));
+    context = Context.setContextToWatson(JSON.parse(JSON.stringify(context)),
+      update.message.text);
   } else {
     const messageForWatson = {
       context,
@@ -103,7 +91,6 @@ botmaster.on('update', (bot, update) => {
     });
     optionalDelay = 1200;
   }
-
   setTimeout(function() {
     var input = "";
     if (update.message.text) {
@@ -114,7 +101,6 @@ botmaster.on('update', (bot, update) => {
       input = input.replace(/\\n/g, " ");
       input = Input.replaceTagsUserInput(input);
     }
-
     const messageForWatson = {
       context,
       workspace_id: process.env.WORKSPACE_ID,
@@ -122,10 +108,8 @@ botmaster.on('update', (bot, update) => {
         text: input,
       },
     };
-
     //THIS LINE READS THE USER INPUT (USEFUL TO DETERMINE STICKERS ID)
     //bot.sendTextMessageTo(String(JSON.stringify(update.message)),update.sender.id);
-
     if (update.message.sticker_id && Stickers.reactToStickers(update.message
         .sticker_id)) {
       var reaction = Stickers.reactToStickers(update.message.sticker_id);
@@ -133,7 +117,6 @@ botmaster.on('update', (bot, update) => {
       setTimeout(function() {
         bot.sendIsTypingMessageTo(update.sender.id);
       }, optionalDelay + 250);
-
       //Support attachments
       if (reaction.attachment) {
         const message = {
@@ -158,14 +141,13 @@ botmaster.on('update', (bot, update) => {
       }
     } else {
       setTimeout(function() {
-        watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
-
+        watsonConversation.message(messageForWatson, (err,
+          watsonUpdate) => {
           Context.setContextAfterWatson(watsonUpdate);
           inMemoryContexts[update.sender.id] = watsonUpdate.context;
-
           for (var i = 0; i < watsonUpdate.output.text.length; i++) {
-            watsonUpdate.output.text[i] = Output.replaceTags(watsonUpdate
-              .output.text[i]);
+            watsonUpdate.output.text[i] = Output.replaceTags(
+              watsonUpdate.output.text[i]);
             const text = watsonUpdate.output.text[i];
             setTimeout(function() {
               bot.sendIsTypingMessageTo(update.sender.id);
@@ -173,9 +155,8 @@ botmaster.on('update', (bot, update) => {
             setTimeout(function() {
               var buttons = [];
               if (buttons = Buttons.sendWithButtons(text)) {
-                bot.sendDefaultButtonMessageTo(buttons, update.sender
-                  .id,
-                    text);
+                bot.sendDefaultButtonMessageTo(buttons,
+                  update.sender.id, text);
               } else {
                 bot.sendTextMessageTo(text, update.sender.id);
               }
@@ -185,11 +166,8 @@ botmaster.on('update', (bot, update) => {
       }, optionalDelay);
     }
   }, optionalDelay / 3);
-
 });
-
 botmaster.on('error', (bot, err) => {
   console.log(err.stack);
 });
-
 module.exports = bots;
