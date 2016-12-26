@@ -14,10 +14,18 @@ const tagsToReplace = {
   'OFFRE_3': 'Jet'
 };
 module.exports = {
+  /**
+   * Returns watson answer before it's shown to the user.
+   * The rules to replace tags are set in the static array tagsToReplace.
+   * @param   text                watson answer
+   * @return  text                modified text
+   */
   replaceTags: function(text) {
-    for (tag in tagsToReplace) {
-      while (text.indexOf(tag) !== -1) {
-        text = text.replace(tag, tagsToReplace[tag])
+    if (Object.keys(tagsToReplace).length !== 0) {
+      for (tag in tagsToReplace) {
+        while (text.indexOf(tag) !== -1) {
+          text = text.replace(tag, tagsToReplace[tag])
+        }
       }
     }
     return text;
