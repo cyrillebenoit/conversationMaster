@@ -26,9 +26,9 @@ module.exports = {
   /**
    * Returns context before it's sent to Watson Conversation API.
    * The rules to update variables are in the static array varsToUpdateBeforeWatson.
-   * @param   inMemoryContext     current context
-   * @param   messageText         user text message
-   * @return  inMemoryContext     modified context
+   * @param   {Object}    inMemoryContext     current context
+   * @param   {string}    messageText         user text message
+   * @return  {Object}                        modified context
    */
   setContextToWatson: function(inMemoryContext, messageText) {
     if (Object.keys(varsToUpdateBeforeWatson).length !== 0) {
@@ -50,7 +50,7 @@ module.exports = {
   /**
    * Updates context after it has been returned from Watson Conversation API.
    * The rules to update variables are in the static array varsToUpdateAfterWatson.
-   * @param   watsonUpdate        return from Watson Conversation API which contains output, context, and all sorts of data.
+   * @param   {Object}    watsonUpdate        return from Watson Conversation API which contains output, context, and all sorts of data.
    */
   setContextAfterWatson: function(watsonUpdate) {
     if (Object.keys(varsToUpdateAfterWatson).length !== 0) {

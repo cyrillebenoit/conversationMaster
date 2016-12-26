@@ -26,8 +26,8 @@ module.exports = {
   /**
    * Returns button array if necessary.
    * The rules to react are set in the static arrays buttonText and buttons.
-   * @param   text                text from Watson
-   * @return  Object or false     buttons or false if not needed
+   * @param   {string}               text    text from Watson
+   * @return  {Object or boolean}            buttons or false if not needed
    */
   sendWithButtons: function(text) {
     if (Object.keys(buttonText).length !== 0) {

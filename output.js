@@ -17,8 +17,8 @@ module.exports = {
   /**
    * Returns watson answer before it's shown to the user.
    * The rules to replace tags are set in the static array tagsToReplace.
-   * @param   text                watson answer
-   * @return  text                modified text
+   * @param   {string}    text     watson answer
+   * @return  {string}             modified text
    */
   replaceTags: function(text) {
     if (Object.keys(tagsToReplace).length !== 0) {

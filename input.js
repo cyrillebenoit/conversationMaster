@@ -12,8 +12,8 @@ module.exports = {
   /**
    * Returns user input before it's sent to Watson Conversation API.
    * The rules to replace tags are set in the static array tagsToReplace.
-   * @param   text                user input
-   * @return  text                modified text
+   * @param   {string}      text       user input
+   * @return  {string}                 modified text
    */
   replaceTagsUserInput: function(text) {
     if (Object.keys(tagsToReplace).length !== 0) {

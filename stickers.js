@@ -30,8 +30,8 @@ module.exports = {
   /**
    * Returns special reaction if the user sent a sticker on Messenger.
    * The rules to react are set in the static array stickers.
-   * @param   sticker_id          sticker id
-   * @return  Object or false     answer (with(out) attachment) or false if undefined id
+   * @param   {int}               sticker_id    sticker id
+   * @return  {Object or false}                 answer (with(out) attachment) or false if undefined id
    */
   reactToStickers: function(sticker_id) {
     if (stickers[sticker_id]) return stickers[sticker_id];

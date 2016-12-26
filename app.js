@@ -69,7 +69,8 @@ app.post('/api/message', function(req, res) {
   };
   if (req.body) {
     if (req.body.input) {
-      payload.input = Input.replaceTagsUserInput(req.body.input);
+      payload.input = JSON.parse(Input.replaceTagsUserInput(JSON.stringify(
+        req.body.input)));
     }
     if (req.body.context) {
       payload.context = Context.setContextToWatson(JSON.parse(JSON.stringify(
