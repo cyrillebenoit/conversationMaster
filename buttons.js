@@ -23,9 +23,17 @@ const buttons = [
   ['Canal+', 'CanalSat', 'Les deux', 'Aucun']
 ]
 module.exports = {
+  /**
+   * Returns button array if necessary.
+   * The rules to react are set in the static arrays buttonText and buttons.
+   * @param   text                text from Watson
+   * @return  Object or false     buttons or false if not needed
+   */
   sendWithButtons: function(text) {
-    for (button in buttonText) {
-      if (text.indexOf(button) !== -1) return buttons[buttonText[button]];
+    if (Object.keys(buttonText).length !== 0) {
+      for (button in buttonText) {
+        if (text.indexOf(button) !== -1) return buttons[buttonText[button]];
+      }
     }
     return false;
   }
