@@ -47,4 +47,5 @@ jspm_packages
 *.tgz
 
 manifest2.yml
+manifest3.yml
 test.js

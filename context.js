@@ -22,12 +22,13 @@ const varsToUpdateAfterWatson = {
     forceIfUndefined: true,
     function: function(answerText, context, key) {
       //Different sets of actions depending on the answerText, can access the whole context, should only update conntext[key]
-      if (context[key] !== 0) {
-        return context[key];
-      }
+      var returnValue = 0;
       if (answerText.indexOf('Tout est bon pour vous ?') !== -1) {
-        return Math.floor(Math.random() * 175000 + 100000); //context[key] + 1;
+        returnValue = Math.floor(Math.random() * 175000 + 100000); //context[key] + 1;
+      } else if (context[key] !== returnValue) {
+        returnValue = context[key];
       }
+      return returnValue;
     }
   }
 };
