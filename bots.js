@@ -7,6 +7,7 @@ const Stickers = require('./stickers')
 const Context = require('./context');
 const Output = require('./output');
 const Input = require('./input');
+const Cloudant = require('./cloudant');
 // get the app environment from Cloud Foundry
 const appEnv = cfenv.getAppEnv();
 const watsonConversation = watson.conversation({
@@ -50,7 +51,7 @@ bots.use(bodyParser.urlencoded({
 const botmasterSettings = {
   botsSettings,
   app: bots,
-  port: appEnv.isLocal ? 3000 : appEnv.port,
+    port: appEnv.isLocal ? 3000 : appEnv.port,
 };
 const delay = 1200;
 const botmaster = new Botmaster(botmasterSettings);
@@ -65,9 +66,9 @@ botmaster.on('update', (bot, update) => {
     const messageForWatson = {
       context,
       workspace_id: process.env.WORKSPACE_ID,
-      input: {
-        text: "",
-      },
+        input: {
+          text: "",
+        },
     };
     watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
       Context.setContextAfterWatson(watsonUpdate);
@@ -104,9 +105,9 @@ botmaster.on('update', (bot, update) => {
     const messageForWatson = {
       context,
       workspace_id: process.env.WORKSPACE_ID,
-      input: {
-        text: input,
-      },
+        input: {
+          text: input,
+        },
     };
     //THIS LINE READS THE USER INPUT (USEFUL TO DETERMINE STICKERS ID)
     //bot.sendTextMessageTo(String(JSON.stringify(update.message)),update.sender.id);
@@ -162,10 +163,12 @@ botmaster.on('update', (bot, update) => {
               }
             }, optionalDelay + delay * (i + 1));
           }
+          Cloudant.updateMessage(messageForWatson, watsonUpdate);
         })
       }, optionalDelay);
     }
   }, optionalDelay / 3);
+  Cloudant.saveLastMessage();
 });
 botmaster.on('error', (bot, err) => {
   console.log(err.stack);
