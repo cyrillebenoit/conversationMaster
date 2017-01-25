@@ -4744,7 +4744,7 @@
         "dialog_node": "node_3_1473942552217"
       },
       "output": {
-        "text": "OFFRE_1: à partir de PRIX_OFFRE_1 par mois.\nOFFRE2: à partir de PRIX_OFFRE_2 par mois. \nOFFRE3: à partir de PRIX_OFFRE_3 par mois."
+        "text": "OFFRE_1: à partir de PRIX_OFFRE_1 par mois.\nOFFRE_2: à partir de PRIX_OFFRE_2 par mois. \nOFFRE_3: à partir de PRIX_OFFRE_3 par mois."
       },
       "parent": "node_4_1477570053972",
       "context": null,
@@ -4763,7 +4763,7 @@
         "dialog_node": "node_3_1473942552217"
       },
       "output": {
-        "text": "OFFRE_1: DEBIT_DOWN_OFFRE_1 Mbit/s, aussi bien en montant qu'en descendant.\nOFFRE_2: DEBIT_DOWN_OFFRE_2 et DEBIT_UP_OFFRE_2 Mbit/s respectivement en descente et en montée. \nOFFRE3: DEBIT_DOWN_OFFRE_3 et DEBIT_UP_OFFRE_3 Mbit/s en descente et montée."
+        "text": "OFFRE_1: DEBIT_DOWN_OFFRE_1 Mbit/s, aussi bien en montant qu'en descendant.\nOFFRE_2: DEBIT_DOWN_OFFRE_2 et DEBIT_UP_OFFRE_2 Mbit/s respectivement en descente et en montée. \nOFFRE_3: DEBIT_DOWN_OFFRE_3 et DEBIT_UP_OFFRE_3 Mbit/s en descente et montée."
       },
       "parent": "node_2_1477569881442",
       "context": null,

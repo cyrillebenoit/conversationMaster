@@ -58,6 +58,7 @@ const botmaster = new Botmaster(botmasterSettings);
 const inMemoryContexts = {};
 botmaster.on('update', (bot, update) => {
   var optionalDelay = 0;
+  var firstText = "";
   var context = inMemoryContexts[update.sender.id];
   if (inMemoryContexts[update.sender.id]) {
     context = Context.setContextToWatson(JSON.parse(JSON.stringify(context)),
@@ -77,6 +78,7 @@ botmaster.on('update', (bot, update) => {
       watsonUpdate.output.text[0] = Output.replaceTags(watsonUpdate.output
         .text[0]);
       const text = watsonUpdate.output.text[0];
+      firstText = text;
       setTimeout(function() {
         bot.sendIsTypingMessageTo(update.sender.id);
       }, 250);
@@ -150,6 +152,7 @@ botmaster.on('update', (bot, update) => {
             watsonUpdate.output.text[i] = Output.replaceTags(
               watsonUpdate.output.text[i]);
             const text = watsonUpdate.output.text[i];
+            if(text !== firstText){
             setTimeout(function() {
               bot.sendIsTypingMessageTo(update.sender.id);
             }, optionalDelay + delay * i + 250);
@@ -161,7 +164,7 @@ botmaster.on('update', (bot, update) => {
               } else {
                 bot.sendTextMessageTo(text, update.sender.id);
               }
-            }, optionalDelay + delay * (i + 1));
+            }, optionalDelay + delay * (i + 1));}
           }
           Cloudant.updateMessage(messageForWatson, watsonUpdate);
         })

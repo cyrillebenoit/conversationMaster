@@ -56,7 +56,7 @@ module.exports = {
     if (Object.keys(varsToUpdateAfterWatson).length !== 0) {
       for (key in varsToUpdateAfterWatson) {
         var currentUpdate = varsToUpdateAfterWatson[key];
-        if (typeof watsonUpdate.context[key] !== 'undefined' ||
+        if (watsonUpdate.context && typeof watsonUpdate.context[key] !== 'undefined' ||
           currentUpdate.forceIfUndefined) {
           if (currentUpdate.value !== false && currentUpdate.value !==
             watsonUpdate.context[key]) {

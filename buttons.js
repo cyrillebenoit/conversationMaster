@@ -1,5 +1,6 @@
 const buttonText = {
-  "offres Zen, Play, et Jet": 0,
+  //"string that has to be included in Watson output text" : button array index in buttons defined below.
+  "offres Plus, Pro, et Ultra": 0,
   "par oui ou non": 1,
   "Voulez-vous ": 1,
   "Voulez vous": 1,
@@ -17,7 +18,7 @@ const buttonText = {
   "Nous proposons deux bouquets": 3
 }
 const buttons = [
-  ['Zen', 'Play', 'Jet'],
+  ['Plus', 'Pro', 'Ultra'],
   ['Oui', 'Non'],
   ['Adresse', 'Identité', 'Offre', 'Options TV', 'Moyen de paiement'],
   ['Canal+', 'CanalSat', 'Les deux', 'Aucun']

@@ -1,12 +1,13 @@
 const tagsToReplace = {
-  'Zen': 'OFFRE_1',
-  'Play': 'OFFRE_2',
-  'Jet': 'OFFRE_3',
-  'Orange': 'OPERATEUR_PRINCIPAL',
+  'Plus': 'OFFRE_1',
+  'Pro': 'OFFRE_2',
+  'Ultra': 'OFFRE_3',
+  'Operatel': 'OPERATEUR_PRINCIPAL',
   'Free': 'OPERATEUR_CONCURRENT',
   'Bouygues': 'OPERATEUR_CONCURRENT',
   'SFR': 'OPERATEUR_CONCURRENT',
-  'B&You': 'OPERATEUR_CONCURRENT'
+  'B&You': 'OPERATEUR_CONCURRENT',
+  'Orange': 'OPERATEUR_CONCURRENT'
 };
 module.exports = {
   /**
