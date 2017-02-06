@@ -1,0 +1,6 @@
+---
+applications:
+- name: app_name
+  memory: 1024M
+  instances: 1
+  host: app_name

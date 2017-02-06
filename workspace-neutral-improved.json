@@ -1996,7 +1996,7 @@
     {
       "go_to": null,
       "output": {
-        "text": "La fibre OFFRE_2, c’est quoi ?\n\n DEBIT_DOWN_OFFRE_2 Mbit/s minimum en débit descendant\n DEBIT_UP_OFFRE_2 Mbit/s minimum en débit montant\n\nEnregistreur 160 Go soit 100h d'enregistrement en qualité HD\n\nTéléphone illimité vers les fixes de France métropolitaine, des DOM et vers les mobiles des USA et du Canada\n\nVoulez-vous choisir cette offre ?"
+        "text": "La fibre OFFRE_2, c’est quoi ?\n\nDEBIT_DOWN_OFFRE_2 Mbit/s minimum en débit descendant\nDEBIT_UP_OFFRE_2 Mbit/s minimum en débit montant\n\nEnregistreur 160 Go soit 100h d'enregistrement en qualité HD\n\nTéléphone illimité vers les fixes de France métropolitaine, des DOM et vers les mobiles des USA et du Canada\n\nVoulez-vous choisir cette offre ?"
       },
       "parent": "node_1_1478162956691",
       "context": null,
@@ -4291,7 +4291,7 @@
         "dialog_node": "node_11_1477570947331"
       },
       "output": {
-        "text": "La fibre OFFRE_1, c’est quoi ?\n\n DEBIT_DOWN_OFFRE_1 Mbit/s minimum en débit descendant\n DEBIT_UP_OFFRE_1 Mbit/s minimum en débit montant\n\n160 chaînes TV dont 40 en HD\n\nTéléphone illimité vers les fixes de France métropolitaine, des DOM et vers les mobiles des USA et du Canada\n\nVoulez-vous continuer avec cette offre ?"
+        "text": "La fibre OFFRE_1, c’est quoi ?\n\nDEBIT_DOWN_OFFRE_1 Mbit/s minimum en débit descendant\nDEBIT_UP_OFFRE_1 Mbit/s minimum en débit montant\n\n160 chaînes TV dont 40 en HD\n\nTéléphone illimité vers les fixes de France métropolitaine, des DOM et vers les mobiles des USA et du Canada\n\nVoulez-vous continuer avec cette offre ?"
       },
       "parent": "node_1_1478162956691",
       "context": null,
@@ -5213,7 +5213,7 @@
         "dialog_node": "node_8_1477570617719"
       },
       "output": {
-        "text": "La fibre OFFRE_3, c’est quoi ?\n\n DEBIT_DOWN_OFFRE_3 Mbit/s minimum en débit descendant\n DEBIT_UP_OFFRE_3 Mbit/s minimum en débit montant\n\nEnregistreur 450 Go soit 180h d'enregistrement en qualité HD\n\nVoulez-vous continuer avec cette offre ?"
+        "text": "La fibre OFFRE_3, c’est quoi ?\n\nDEBIT_DOWN_OFFRE_3 Mbit/s minimum en débit descendant\nDEBIT_UP_OFFRE_3 Mbit/s minimum en débit montant\n\nEnregistreur 450 Go soit 180h d'enregistrement en qualité HD\n\nVoulez-vous continuer avec cette offre ?"
       },
       "parent": "node_1_1478162956691",
       "context": null,
