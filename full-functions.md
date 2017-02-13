@@ -33,6 +33,16 @@ Set forceIfUndefined to true to force the creation of the variable in Context if
 + in *varsToUpdateBeforeWatson*, the message in the function is from **user**.
 + in *varsToUpdateAfterWatson*, the message in the function is from **Watson**.
 
+# Buttons (buttons.js)
+
+In some cases, you might want to propose a limited amount of answers to the user to limit the amount of API calls from your app. When displayed, the buttons can be pressed to send the message automatically, or the user can enter his own if he feels like it.
+At the top of the **buttons.js** file, you can find two simple arrays that will allow you to add buttons very easily.
+
+In the **buttonText** array you have to define which text, said by Watson, will require buttons attached to the message. (ie. if Watson says something like *Have you already* the answer can't really be anything other than *yes*, *no*, or *I don't know*)
+The key is the part of text you're looking for in the message, and the value is the index of the buttons list in the second array (**buttons**)
+
+Even though it might seem complicated at first, taking a quick look at the code might, by itself, solve your questions.
+
 # Entities (input.js)
 
 Watson Conversation service is really good for detecting Intents, but Entities are purely and simply search and replace. So I decided to allow us, developers, to do it from the outside, to eventually improve on this search and detect more data than Conversation can see from APIs like Alchemy or WKS.
