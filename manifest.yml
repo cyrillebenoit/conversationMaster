@@ -10,7 +10,6 @@ applications:
 - name: wConversationMaster
   memory: 1024M
   instances: 1
-  host: wConversationMaster
   services:
   - wcm-conversation
   - wcm-cloudant
