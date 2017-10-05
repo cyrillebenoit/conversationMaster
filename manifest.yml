@@ -8,6 +8,8 @@ declared-services:
     plan: Lite
 applications:
 - name: wConversationMaster
+  command: npm start
+  path: .
   memory: 1024M
   instances: 1
   services:
