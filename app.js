@@ -19,7 +19,7 @@ require('dotenv').config({
 });
 var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
-var Watson = require('watson-developer-cloud/conversation/v1'); // watson sdk
+var Watson = require('watson-developer-cloud'); // watson sdk
 const Context = require('./context');
 const Output = require('./output');
 const Input = require('./input');
@@ -29,14 +29,12 @@ var app = express();
 app.use(express.static('./public')); // load UI from public folder
 app.use(bodyParser.json());
 // Create the service wrapper
-var conversation = new Watson({
+var assistant = new Watson.AssistantV1({
   // If unspecified here, the CONVERSATION_USERNAME and CONVERSATION_PASSWORD env properties will be checked
   // After that, the SDK will fall back to the bluemix-provided VCAP_SERVICES environment property
   // username: '<username>',
   // password: '<password>',
-  url: 'https://gateway.watsonplatform.net/conversation/api',
-  version_date: '2016-09-20',
-  version: 'v1'
+  version: '2018-02-16'
 });
 // Endpoint to be call from the client side
 app.post('/api/message', function(req, res) {
@@ -64,7 +62,7 @@ app.post('/api/message', function(req, res) {
     }
   }
   // Send the input to the conversation service
-  conversation.message(payload, function(err, data) {
+  assistant.message(payload, function(err, data) {
     Context.setContextAfterWatson(data);
     if (err) {
       return res.status(err.code || 500).json(err);
